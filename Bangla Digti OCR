@@ -1,0 +1,413 @@
+from tkinter import *
+import os, random
+from tkinter import filedialog
+from PIL import Image, ImageTk
+from os import listdir
+from os.path import isfile, join
+from PIL import Image
+import numpy as np
+import os.path
+import csv
+import csv
+import pandas as pd
+from sklearn import tree
+from sklearn import svm
+from scipy import sparse
+from tkinter import ttk
+import tkinter as tk
+import vlc
+import time
+
+
+check = []
+X_features_test = []
+
+class GUIofOCR:
+
+    clf = tree.DecisionTreeClassifier()
+
+    def __init__(self, master):
+        self.master = master
+        #master.title("A simple GUI")
+
+        master.title("Optical Cheracter Recognition")
+        # width,height,x_pision in pc,y_position in pc
+        master.geometry("600x500+400+100")
+        master.resizable(width=False, height=False)
+
+        self.top = Frame(master, width=600, height=100, relief=SUNKEN)
+        self.top.place(x=0, y=0)
+        # top.pack(side=TOP)
+
+        self.leftframe = Frame(master, width=300, height=400, relief=SUNKEN)
+        # leftframe.pack(side=LEFT)
+        self.leftframe.place(x=0, y=100)
+
+        self.rightframe = Frame(master, width=300, height=400,bg="azure",relief=SUNKEN)
+        # rightframe.pack(side=RIGHT)
+        self.rightframe.place(x=300, y=100)
+
+        labelfont = ('times', 20, 'bold')
+        self.widget = Label(self.top, text='Bangla Digit Recognition')
+        self.widget.config(bg='black', fg='yellow')
+        self.widget.config(font=labelfont)
+        self.widget.config(height=3, width=40)
+        self.widget.pack(expand=YES, fill=BOTH)
+
+        labelfont = ('times', 12, 'bold')
+        self.widget = Label(self.leftframe, text='You have to train the dataset first.')
+        self.widget.config(bg='thistle1', fg='red')
+        self.widget.config(font=labelfont)
+        self.widget.config(height=2, width=30)
+        self.widget.place(x=5,y=0)
+
+        self.browse_button = Button(self.leftframe, padx=20, pady=10, bd=6, fg="yellow", font=('arial', 15, 'bold'),
+                                    text="Browse",
+                                    bg="green", command=self.Browse_Image)  # action goes down
+        self.browse_button.place(x=80, y=310)
+
+        self.Result_button = Button(self.rightframe, padx=20, pady=10, bd=6, fg="Blue2", font=('arial', 15, 'bold'),
+                                    text="Result",
+                                    bg="bisque", command=self.Get_Result)  # action goes down
+        self.Result_button.place(x=80, y=310)
+
+        self.train_button = Button(self.leftframe, padx=20, pady=10, bd=6, fg="black", font=('arial', 15, 'bold'),
+                             text="Train DataSet",
+                             bg="purple1",command=self.Train_dataset)  # action goes down
+        self.train_button.place(x=50, y=50)
+
+        self.Instructions_button = Button(self.rightframe, padx=20, pady=10, bd=6, fg="red", font=('arial', 15, 'bold'),
+                                   text="Instructions",bg="CadetBlue1",command=self.popup_Create)  # action goes down
+        self.Instructions_button.place(x=60, y=50)
+
+        self.temp_lebel = Label(self.leftframe, bg="snow")
+        self.temp_lebel.config(height=10, width=30)
+        self.temp_lebel.place(x=40, y=130)
+
+        self.Result_button.config(state=DISABLED)
+        self.browse_button.config(state=DISABLED)
+
+    def Browse_Image(self):
+
+
+        self.imagefile = filedialog.askopenfilename(
+            initialdir="E:/Programming OOP/Bangla Digit Recognition/TestDataSet",
+            title="Select file", filetypes=(("PNG file", ".png"), ("All Files", ".*")))
+
+        self.browse_file_name=os.path.basename(self.imagefile) # get the pure filename without path extension
+        print(self.browse_file_name)
+
+        self.img = PhotoImage(file=self.imagefile)
+        #print(self.imagefile)
+        self.photo_label = Label(self.leftframe, image=self.img, bg="floral white")
+        # photo_label.grid()
+        self.photo_label.image = self.img
+        self.photo_label.config(height=150, width=200)
+        self.photo_label.place(x=40, y=130)
+
+
+    def Train_dataset(self):
+
+        X_features = []
+        Y_lebel=[]
+
+        #working with 0
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/zero'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(0)
+
+        # working with 1
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/one'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(1)
+
+        # working with 2
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/two'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(2)
+
+        # working with 3
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/three'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+             im = Image.open(onlyfiles[k]).convert('L')
+             data = np.array(im)
+             temp = []
+             for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+             X_features.append(temp)
+             Y_lebel.append(3)
+
+        # working with 4
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/four'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(4)
+
+        # working with 5
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/five'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(5)
+
+        # working with 6
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/six'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(6)
+        # working with 7
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/seven'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(7)
+
+        # working with 8
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/eight'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(8)
+
+        # working with 9
+        mypath = 'E:/Programming OOP/Bangla Digit Recognition/TrainDataSet/nine'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        #print(len(onlyfiles))
+
+        for k in range(0, len(onlyfiles)):
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features.append(temp)
+            Y_lebel.append(9)
+        print("Total Number Of features: ",end="")
+        print(len(X_features))
+        print("Total Number Of samples: ", end="")
+        print(len(Y_lebel))
+        self.clf.fit(X_features, Y_lebel)
+
+        print("All data traning is finished")
+        self.Instructions_button.config(state='normal')
+        self.Result_button.config(state='normal')
+        self.browse_button.config(state='normal')
+        self.train_button.config(state=DISABLED)
+
+
+        #Accuracy check
+
+        mypath_testaccuracy = 'E:/Programming OOP/Bangla Digit Recognition/TestDataSet'
+        onlyfiles = [f for f in listdir(mypath_testaccuracy) if isfile(join(mypath_testaccuracy, f))]
+        #print(len(onlyfiles))
+
+        predict_value=[]
+        temp_value=[]
+        temp_file_name=[]
+        actual_value=[]
+
+        for k in range(0, len(onlyfiles)):
+            X_features_accuracy = []
+            im = Image.open(onlyfiles[k]).convert('L')
+            data = np.array(im)
+            temp = []
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    temp.append(data[i][j])
+
+            X_features_accuracy.append(temp)
+            temp_value=self.clf.predict(X_features_accuracy)
+            #print(temp_value[0],end=" ")
+            predict_value.append(temp_value[0])
+            temp_file_name=onlyfiles[k].split('.')
+            tt=int(temp_file_name[0])
+            rem=tt%10
+            actual_value.append(rem)
+        #print(predict_value)
+
+        cnt_acc=0
+        for k in range(0,len(predict_value)):
+            #print(predict_value[k],actual_value[i])
+            if(predict_value[k]==actual_value[k]):
+                cnt_acc=cnt_acc+1
+
+        total_accuracy=(cnt_acc/91)*100
+        print("Total Accuracy is: ",end="")
+        print(total_accuracy,"%")
+
+
+    def Get_Result(self):
+        print(self.browse_file_name)
+
+        X_feature_test=[]
+        im = Image.open(self.browse_file_name).convert('L')
+        data = np.array(im)
+        temp = []
+        for i in range(0, 32):
+            for j in range(0, 32):
+                temp.append(data[i][j])
+        X_feature_test.append(temp)
+        print("Your outpur is: ",end="")
+        output=self.clf.predict(X_feature_test)
+        print(output[0])
+
+        sound_file_0 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/0.mp3")
+        sound_file_1 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/1.mp3")
+        sound_file_2 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/2.mp3")
+        sound_file_3 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/3.mp3")
+        sound_file_4 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/4.mp3")
+        sound_file_5 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/5.mp3")
+        sound_file_6 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/6.mp3")
+        sound_file_7 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/7.mp3")
+        sound_file_8 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/8.mp3")
+        sound_file_9 = vlc.MediaPlayer("E:/Programming OOP/Bangla Digit Recognition/9.mp3")
+
+        if output[0]==0:
+            output_unicode="\u09E6"
+            sound_file_0.play()
+        elif output[0]==1:
+            output_unicode = "\u09E7"
+            sound_file_1.play()
+        elif output[0] == 2:
+            output_unicode = "\u09E8"
+            sound_file_2.play()
+        elif output[0] == 3:
+            output_unicode = "\u09E9"
+            sound_file_3.play()
+        elif output[0] == 4:
+            output_unicode = "\u09EA"
+            sound_file_4.play()
+        elif output[0] == 5:
+            output_unicode = "\u09EB"
+            sound_file_5.play()
+        elif output[0] == 6:
+            output_unicode = "\u09EC"
+            sound_file_6.play()
+        elif output[0] == 7:
+            output_unicode = "\u09ED"
+            sound_file_7.play()
+        elif output[0] == 8:
+            output_unicode = "\u09EE"
+            sound_file_8.play()
+        elif output[0] == 9:
+            output_unicode = "\u09EF"
+            sound_file_9.play()
+
+        labelfont = ('Helvetica', 32, 'bold')
+        self.result_label = Label(self.rightframe, text=output_unicode,justify=CENTER)
+        self.result_label.config(bg='snow', fg='black')
+        self.result_label.config(font=labelfont)
+        self.result_label.config(height=3, width=8)
+        self.result_label.place(x=45, y=130)
+
+
+    def popup_Create(self):
+        NORM_FONT = ("Helvetica", 10)
+        popup = tk.Tk()
+        popup.geometry("310x120+685+120")
+        def leavemini():
+            popup.destroy()
+        popup.wm_title("Instructions")
+        msg='''
+    In every run,we have to click "train dataset" once
+    to trian the dataset.Then,click on "Browse" button
+    to select an image and then click "Result" button
+    to see the predicted result of this image.
+        '''
+        label =Label(popup, text=msg, font=NORM_FONT)
+        label.pack(side="top")
+        self.B1 = Button(popup, text="Okay", command=leavemini)
+        self.B1.pack()
+        popup.mainloop()
+
+
+root = Tk()
+my_gui = GUIofOCR(root)
+root.mainloop()
