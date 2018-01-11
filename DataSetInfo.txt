@@ -1,0 +1,7 @@
+In this project we need test dataset,Training Dataset,Vlc media played.
+
+dataset links are given below:
+
+TestData: TraingData: other files data:  https://www.dropbox.com/home/SEC_ML_LAB_FINAL_CSE-816_2012331509/Bangla%20Digit%20Recognition 
+
+
